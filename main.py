@@ -93,7 +93,7 @@ class Robot:
     # функция для ожидания нажатия датчика касания
     def wait_pressed(self):
         self.ev3.speaker.beep(500,100)
-        while not self.touch_sensor_1.pressed(): pass
+        while not self.touch_sensor_1.pressed(): print(self.line_sensor.rgb())
         wait(300)
 
 
@@ -276,9 +276,11 @@ class Robot:
 
     # подсчет кол-ва кубиков(на вход принимает: расстояние от первого до последнего кубика, скорость)
     # реботает в режиме rgb
-    def get_count_сolor_objects(self, dist=600, speed=180):
+    def get_count_сolor_objects(self, dist=560, speed=180):
         now_n = 0
         cur_obj = False
+
+        self.robot.reset()
 
         while self.robot.distance() <= dist:
             self.run_line(speed=speed)
@@ -294,14 +296,21 @@ class Robot:
             if (self.line_sensor.rgb()[0] >= 11 or self.line_sensor.rgb()[2] >= 20) and cur_obj == False:
                 cur_obj = True
                 now_n += 1
-                # self.beep(30)
-                self.color_list[(self.robot.distance() // 45) - 1] = self.line_sensor.rgb()
+                # self.color_list[(self.robot.distance() // 45) - 1] = self.line_sensor.rgb()
+                # print(self.color_list)
+                # белый (14, 15, 26)
+                # красный (46, 10, 4)
+                # синий (8, 20, 42)
+                # желтый (63, 48, 8)
 
-            # Считыввет отсутствие кубика, когда значение крастного < 7 или значение синего < 12 и кубик был считан
-            elif self.line_sensor.rgb()[0] >= 10 and self.line_sensor.rgb()[2] > 20 and cur_obj == True:
-                cur_obj = False
-                self.beep(800)
+            else:
+                if cur_obj == True:
+                    cur_obj = False
+                    print(self.line_sensor.rgb())
+                    print((self.robot.distance() // 45) - 1)
 
+                else:
+                    ...
 
 
         print('*********************') 
