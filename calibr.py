@@ -54,10 +54,15 @@ class Robot:
 
     # инитим переменные
     def init_vars(self): # инициализация переменных
-        
+
         self.color_list = [0]*10
         self.run_list = list()
+        self.cube_list = list()
         self.d = 62.4
+        self.red = list()
+        self.yellow = list()
+        self.blue = list()
+
 
         self.default_speed = 350 # инициализация дефолтной скорости
 
@@ -65,8 +70,6 @@ class Robot:
         self.last_error = 0 # инициализация last_error
         self.error = 0 # инициализация error
         self.I = 0 # инициализация I
-
-        self.gray = 35 # инициализация среднего значения между белым и черным
 
         self.counter = 1 # инициализация counter
 
@@ -83,6 +86,7 @@ class Robot:
         }
 
     def wait_pressed(self):
+        self.ev3.speaker.beep(500,100)
         while not self.touch_sensor_1.pressed(): pass
         wait(300)
 
@@ -99,34 +103,61 @@ class Robot:
         wait(10)
 # функция для определения моды(доложно считывать через count кол-во элементов в self.color_list)
     def count_mode(self):
-        max_counter_list=0
-        set_mode = set(self.color_list)
+        mode_list = self.check_col()
+        mode_list_new = [[]]
+        for i in mode_list[0:len(mode_list)-1]:
+            if i=="|":
+                mode_list_new.append([])
+            else:
+                mode_list_new[-1].append(i)
+        # print(mode_list_new)
+        self.blue = mode_list_new[0]
+        self.red = mode_list_new[1]
+        self.yellow = mode_list_new[2]
+        set_mode = list()
+        set_mode.append(max(set(self.blue), key=self.blue.count))
+        set_mode.append(max(set(self.red), key=self.red.count))
+        set_mode.append(max(set(self.yellow), key=self.yellow.count))
+        print(set_mode)
+        return set_mode
 
 
-    def check_col(self, dist=170, speed = 180):
+
+    def check_col(self, dist=90, speed = 200):
+        temp_color_list = []
+        
+
         for _ in range(3):
-            temp_color_list = []
-            while self.robot.distance() <= dist // 3:
+            while self.robot.distance() <= dist:
                 self.run_line(speed=speed)
                 temp_color_list.append(self.line_sensor.rgb())
                 wait(10)
-            print(temp_color_list)
-            # Далее по списку кортежей определяем модный и записываем его в self.color_list
-            # self.color_list.append(mode(list(map(str, temp_color_list))))
+            temp_color_list.append("|")
+            self.robot.reset()
+            self.right_motor.stop()
+            self.left_motor.stop()
+            self.wait_pressed() 
 
-
-            temp_color_list.clear()
-        print(self.color_list)
-        return self.color_list
+        print(temp_color_list)
+        return temp_color_list
 
 
 
     def main(self) -> None:
         self.wait_pressed() 
-        f = open('colors.txt','w') # открытие в режиме записи
-        vars = ' '.join(self.check_col())
-        print(vars, file=f)
-        f.close()  # закрытие файла
+        # self.check_col()
+        # f = open('colors.txt','w') # открытие в режиме записи
+        # # f.write()
+        # # vars = ' '.join(self.count_mode())
+        # result_read = self.count_mode()
+        # for res in result_read:
+            
+        
+        #     print(' '.join(list(map(str, res))), file=f)
+        # f.close()  # закрытие файла
+        while True:
+            print(self.line_sensor.rgb())
+            self.wait_pressed() 
     
 
 r = Robot()
@@ -135,3 +166,9 @@ r.main()
 # f = open('xyz.txt','w')  # открытие в режиме записи
 # f.write('Hello \n World')  # запись Hello World в файл
 # f.close()  # закрытие файла
+
+
+
+        # print(temp_color_list)
+            # Далее по списку кортежей определяем модный и записываем его в self.color_list
+            # self.color_list.append(mode(list(map(str, temp_color_list))))
