@@ -291,16 +291,19 @@ class Robot:
 
             # добавляет значение цвета кубика в место в списке, где робот считал кубик, 
             # если значение красного > 8 или значение синего > 15 и кубик не был считан
-            if (self.line_sensor.rgb()[0] >= 11 or self.line_sensor.rgb()[2] >= 20) and cur_obj == False:
+            if (self.line_sensor.rgb()[0] >= 12 or self.line_sensor.rgb()[2] >= 25) and cur_obj == False:
                 cur_obj = True
                 now_n += 1
-                # self.beep(30)
+                self.beep(30)
                 self.color_list[(self.robot.distance() // 45) - 1] = self.line_sensor.rgb()
 
             # Считыввет отсутствие кубика, когда значение крастного < 7 или значение синего < 12 и кубик был считан
-            elif self.line_sensor.rgb()[0] >= 10 and self.line_sensor.rgb()[2] > 20 and cur_obj == True:
+            elif self.line_sensor.rgb()[0] <= 12 and self.line_sensor.rgb()[2] < 22 and cur_obj == True:
                 cur_obj = False
                 self.beep(800)
+
+            if 0 <= (self.robot.distance() % 45) <= 2:
+                print(self.line_sensor.rgb())
 
 
 
@@ -327,9 +330,9 @@ class Robot:
         for i in range(10):
             if self.color_list[i]:
                 red, green, blue = self.color_list[i]
-                if green > int(self.Blue[1])-2:
+                if blue > int(self.Blue[2])-8:
                     self.run_list.append(1)
-                elif green < int(self.Red[1])+2:
+                elif blue < int(self.Red[2])+5:
                     self.run_list.append(2)
                 else:
                     self.run_list.append(-1)               
