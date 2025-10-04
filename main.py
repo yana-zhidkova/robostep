@@ -93,7 +93,7 @@ class Robot:
     # функция для ожидания нажатия датчика касания
     def wait_pressed(self):
         self.ev3.speaker.beep(500,100)
-        while not self.touch_sensor_1.pressed(): print(self.line_sensor.rgb())
+        while not self.touch_sensor_1.pressed(): pass
         wait(300)
 
 
@@ -276,11 +276,9 @@ class Robot:
 
     # подсчет кол-ва кубиков(на вход принимает: расстояние от первого до последнего кубика, скорость)
     # реботает в режиме rgb
-    def get_count_сolor_objects(self, dist=560, speed=180):
+    def get_count_сolor_objects(self, dist=600, speed=180):
         now_n = 0
         cur_obj = False
-
-        self.robot.reset()
 
         while self.robot.distance() <= dist:
             self.run_line(speed=speed)
@@ -296,21 +294,14 @@ class Robot:
             if (self.line_sensor.rgb()[0] >= 11 or self.line_sensor.rgb()[2] >= 20) and cur_obj == False:
                 cur_obj = True
                 now_n += 1
-                # self.color_list[(self.robot.distance() // 45) - 1] = self.line_sensor.rgb()
-                # print(self.color_list)
-                # белый (14, 15, 26)
-                # красный (46, 10, 4)
-                # синий (8, 20, 42)
-                # желтый (63, 48, 8)
+                # self.beep(30)
+                self.color_list[(self.robot.distance() // 45) - 1] = self.line_sensor.rgb()
 
-            else:
-                if cur_obj == True:
-                    cur_obj = False
-                    print(self.line_sensor.rgb())
-                    print((self.robot.distance() // 45) - 1)
+            # Считыввет отсутствие кубика, когда значение крастного < 7 или значение синего < 12 и кубик был считан
+            elif self.line_sensor.rgb()[0] >= 10 and self.line_sensor.rgb()[2] > 20 and cur_obj == True:
+                cur_obj = False
+                self.beep(800)
 
-                else:
-                    ...
 
 
         print('*********************') 
@@ -327,17 +318,18 @@ class Robot:
         data_list = x.readlines()
         
         # присваивание переменным значения из полученного списка
-        self.Red = convert_rgb(data_list[0])
-        self.Yellow = convert_rgb(data_list[1])
-        self.Blue = convert_rgb(data_list[2])
+        self.Blue = convert_rgb(data_list[0])
+        self.Red = convert_rgb(data_list[1])
+        self.Yellow = convert_rgb(data_list[2])
+        
         
 
         for i in range(10):
             if self.color_list[i]:
                 red, green, blue = self.color_list[i]
-                if blue > int(self.Blue[2])-2:
+                if green > int(self.Blue[1])-2:
                     self.run_list.append(1)
-                elif blue < int(self.Red[2])+2:
+                elif green < int(self.Red[1])+2:
                     self.run_list.append(2)
                 else:
                     self.run_list.append(-1)               

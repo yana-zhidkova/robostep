@@ -146,18 +146,18 @@ class Robot:
     def main(self) -> None:
         self.wait_pressed() 
         # self.check_col()
-        # f = open('colors.txt','w') # открытие в режиме записи
-        # # f.write()
-        # # vars = ' '.join(self.count_mode())
-        # result_read = self.count_mode()
-        # for res in result_read:
+        f = open('colors.txt','w') # открытие в режиме записи
+        # f.write()
+        # vars = ' '.join(self.count_mode())
+        result_read = self.count_mode()
+        for res in result_read:
             
         
-        #     print(' '.join(list(map(str, res))), file=f)
-        # f.close()  # закрытие файла
-        while True:
-            print(self.line_sensor.rgb())
-            self.wait_pressed() 
+            print(' '.join(list(map(str, res))), file=f)
+        f.close()  # закрытие файла
+        # while True:
+        #     print(self.line_sensor.rgb())
+        #     self.wait_pressed() 
     
 
 r = Robot()
